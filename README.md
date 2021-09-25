@@ -104,6 +104,21 @@ For ones who would like to read this in whole, the order of the following sectio
 <a name="SevereErrorMessage2070"></a>
 ####  · Severe Error Message # 2070 (Windows) :hourglass_flowing_sand:
 ####  · segmentation violation/segmentation fault (Linux) :hourglass_flowing_sand:
+##### Example:
+
+Linux
+
+    Error: segmentation violation
+       rax 0000000000000000, rbx 000000000060c640, rcx ffffffffffffffff
+       rdx 0000000000007f57, rsp 0000007fbffed948, rbp 0000007fbffed970
+       rsi 000000000000000b, rdi 0000000000007f57, r8  0000002a9558af40
+       r9  0000000000000000, r10 0000007fbffed801, r11 0000000000000206
+       r12 0000000000615890, r13 0000000000640398, r14 0000000000640398
+       r15 0000000000640398
+       
+Windows
+![image](https://user-images.githubusercontent.com/18537705/134765301-a7283814-4f7f-4289-acef-569923bd41fc.png)
+
 #
 ### SCF Convergence
 <a name="100"></a>
