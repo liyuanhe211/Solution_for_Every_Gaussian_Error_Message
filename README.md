@@ -1,4 +1,4 @@
-# Solutions for Gaussian Error Messages (translation work in progress)
+# Solutions for Gaussian Error Messages (migration work in progress)
 This is an article containing reliable explanations and ways to solve the error messages for almost all common Gaussian quantum chemistry program. This is a per request English translation for [a long blog in Chinese](http://bbs.keinsci.com/thread-4829-1-1.html) I wrote a few years back. I wrote the original Chinese post as there are almost no reliable list of how to solve the errors. Similar online resources online are neither comprehensive nor accurate.
 
 This blog is for people with basic knowledge of how Gaussian works, what's the basic structure of Gaussian files, and a basic understanding of quantum chemistry.
@@ -44,7 +44,7 @@ Using (part of) this blog in commercial setting (or for any profitable action) i
  * [L602，GetVDW:  no radius for atom XX atomic number XX.]
  * [L801，Excessive mixing of core and valence orbitals.]
  * [L801, Fatal Problem: The smallest alpha delta epsilon is XXXXXX]
- * [L913，*MAX. CYCLES*]
+ * [L913，\*MAX. CYCLES\*]
  * [L914，XXXXXX words are not enough for AIAXAO.]
  * [L1002，Inaccurate quadrature in CalDSu.]
  * [L1002，No func 3rd derivs with XXX.]
@@ -148,7 +148,7 @@ For ones who would like to read this in whole, the order of the following sectio
 #
 ####  · L502/L508，Inv3 failed in PCMMkU
 #
-####  · L913，*MAX. CYCLES*
+####  · L913，\*MAX. CYCLES\*
 #
 ####  · L103，New curvilinear step not converged. Error imposing constraints.
 #
