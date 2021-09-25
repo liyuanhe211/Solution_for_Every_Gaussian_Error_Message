@@ -102,10 +102,9 @@ For ones who would like to read this in whole, the order of the following sectio
 
 ### General errors
 <a name="SevereErrorMessage2070"></a>
-####  · Severe Error Message # 2070 (Windows) :hourglass_flowing_sand:
-####  · segmentation violation/segmentation fault (Linux) :hourglass_flowing_sand:
-##### Example:
-
+####  · Severe Error Message # 2070 (Windows) :heavy_check_mark:
+####  · segmentation violation/segmentation fault (Linux) :heavy_check_mark:
+**Example:**
 Linux
 
     Error: segmentation violation
@@ -117,7 +116,15 @@ Linux
        r15 0000000000640398
        
 Windows
-![image](https://user-images.githubusercontent.com/18537705/134765301-a7283814-4f7f-4289-acef-569923bd41fc.png)
+![image](https://user-images.githubusercontent.com/18537705/134765617-ca4a7f87-8fb0-4c83-93e1-e4c1deac7418.png)
+
+**Explanation**
+This is just an message saying "Something is wrong" without any specific information. 
+
+**Solution**
+As there is no info on the spefici error, any method you got online for _"how to solve the Gaussian 2070 error"_ is nonsense. You should look at the (end of the) output file to see the specific reason for the error.
+
+On the windows version of the Gaussian, the output might not update when the error happened, so you might see an empty window. In this case, you need to open the output file itself, or wait some time to see the text in the main UI.
 
 #
 ### SCF Convergence
