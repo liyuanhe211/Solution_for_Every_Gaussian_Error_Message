@@ -1,9 +1,9 @@
 # Solutions for Gaussian Error Messages (migration work in progress :hourglass_flowing_sand:)
-This is an article containing reliable explanations and ways to solve the error messages for almost all common Gaussian quantum chemistry program. This is a per request English translation for [a long blog in Chinese](http://bbs.keinsci.com/thread-4829-1-1.html) I wrote a few years back. I wrote the original Chinese post as there are almost no reliable list of how to solve the errors. Similar online resources online are neither comprehensive nor accurate.
+This is an article containing reliable explanations and ways to solve the error messages for almost all common Gaussian quantum chemistry programs. This is a per request English translation for [a long blog in Chinese](http://bbs.keinsci.com/thread-4829-1-1.html) I wrote a few years back. I wrote the original Chinese post as there is almost no reliable list of how to solve the errors. Similar online resources online are neither comprehensive nor accurate.
 
 This blog is for people with basic knowledge of how Gaussian works, what's the basic structure of Gaussian files, and a basic understanding of quantum chemistry.
 
-Using (including part of) this blog in commercial setting (or for any profitable action) is prohibited. Otherwise feel free to use this material as long as you mention the source.
+Using (including part of) this blog in a commercial setting (or for any profitable action) is prohibited. Otherwise, feel free to use this material as long as you mention the source.
 
 I'm not related to Gaussian Inc. in any way.
 
@@ -76,13 +76,13 @@ I'm not related to Gaussian Inc. in any way.
  * [NtrErr Called from XXXXXX.](#3600)
 ### What does a Gaussian Bug look like
  * [Is it a bug?](#3700)
-### Abnormal situations that doesn't give an error message
- * [IRC job stopped prematuraly, or goes in the another direction](#3800)
+### Abnormal situations that don't give an error message
+ * [IRC job stopped prematurely, or goes in another direction](#3800)
  * [One or more small imaginary frequencies after optimization](#3900)
  * [G09 Windows exit at L1.exe without an error message](#4000)
  * [Abnormal bonding / unbonding in GaussView](#4100)
  * [Viewing IRC jobs in GaussView, it gives an abnormally low energy point at the X=0 point](#4200)
-### Normal outputs that could be mistanken as errors
+### Normal outputs that could be mistaken as errors
  * [Warning!!: The largest alpha MO coefficient is...](#4800)
  * [Warning!!: The smallest alpha delta epsilon is...](#4800)
  * [Error on total polarization charges](#4900)
@@ -91,9 +91,9 @@ I'm not related to Gaussian Inc. in any way.
  * [DIIS: error](#5200)
  * [End of XXXXXX F.D. properties file   XXX does not exist.](#5300)
 ### Other common questions
- * [When opening chk or fchk files with GaussView: Missing or bad data: Alpha Orbital Energies](#4300)
+ * ["Missing or bad data: Alpha Orbital Energies" when opening chk or fchk files with GaussView](#4300)
  * [“How long will this calculation takes?”](#4400)
- * [How to generate an inital guess for transition state geometry optimization with flexiable scan](#4500)
+ * [How to generate an initial guess for transition state geometry optimization with flexible scan](#4500)
  * [“How to put a charge / electron on this atom / fragment?"](#4600)
  * [How to calculate activation-strain (distortion-interaction) energy](#4700)
 
@@ -102,9 +102,12 @@ For ones who would like to read this in whole, the order of the following sectio
 
 ### General errors
 <a name="SevereErrorMessage2070"></a>
-####  · Severe Error Message # 2070 (Windows) :heavy_check_mark:
-####  · segmentation violation/segmentation fault (Linux) :heavy_check_mark:
-**Example:**
+####  :arrow_forward: Severe Error Message # 2070 (Windows) 
+####  :arrow_forward: segmentation violation/segmentation fault (Linux) 
+
+**· Example:**
+
+
 Linux
 
     Error: segmentation violation
@@ -116,15 +119,18 @@ Linux
        r15 0000000000640398
        
 Windows
+
 ![image](https://user-images.githubusercontent.com/18537705/134765617-ca4a7f87-8fb0-4c83-93e1-e4c1deac7418.png)
 
-**Explanation**
-This is just an message saying "Something is wrong" without any specific information. 
+**· Explanation**
 
-**Solution**
-As there is no info on the spefici error, any method you got online for _"how to solve the Gaussian 2070 error"_ is nonsense. You should look at the (end of the) output file to see the specific reason for the error.
+This is just a message saying "Something is wrong" without any specific information. 
 
-On the windows version of the Gaussian, the output might not update when the error happened, so you might see an empty window. In this case, you need to open the output file itself, or wait some time to see the text in the main UI.
+**· Solution**
+
+As there is no info on the specific error, any method you got online for _"how to solve the Gaussian 2070 error"_ is nonsense. You should look at the (end of the) output file to see the specific reason for the error.
+
+On the windows version of the Gaussian, the output might not update when the error happened, so you might see an empty window. In this case, you need to open the output file itself or wait some time to see the text in the main UI.
 
 #
 ### SCF Convergence
@@ -286,8 +292,11 @@ Some known bugs:
 #### End of XXXXXX F.D. properties file   XXX does not exist. :hourglass_flowing_sand:
 #
 ### Abnormal situations that doesn't give an error message
+
+
+### Abnormal situations that don't give an error message
 <a name="3800"></a>
-####  · IRC job stopped prematuraly, or goes in the another direction :hourglass_flowing_sand:
+####  · IRC job stopped prematurely, or goes in the other direction :hourglass_flowing_sand:
 #
 <a name="3900"></a>
 ####  · One or more small imaginary frequencies after optimization :hourglass_flowing_sand:
@@ -304,12 +313,12 @@ Some known bugs:
 <a name="4300"></a>
 ####  · "Missing or bad data: Alpha Orbital Energies" when opening chk or fchk files with GaussView :hourglass_flowing_sand:
 #
+### Other common entry-level questions 
 <a name="4400"></a>
-### Other common entry-level questions
 ####  · “How long will this calculation takes?” :hourglass_flowing_sand:
 #
 <a name="4500"></a>
-####  · How to generate an inital guess for transition state geometry optimization with flexiable scan :hourglass_flowing_sand:
+####  · How to generate an initial guess for transition state geometry optimization with flexible scan :hourglass_flowing_sand:
 #
 <a name="4600"></a>
 ####  · “How to put a charge / electron on this atom / fragment?" :hourglass_flowing_sand:
