@@ -3,7 +3,7 @@ This is an article containing reliable explanations and ways to solve the error 
 
 This blog is for people with basic knowledge of how Gaussian works, what's the basic structure of Gaussian files, and a basic understanding of quantum chemistry.
 
-Using (part of) this blog in commercial setting (or for any profitable action) is prohibited. Otherwise feel free to use this material as long as you mention the source.
+Using (including part of) this blog in commercial setting (or for any profitable action) is prohibited. Otherwise feel free to use this material as long as you mention the source.
 
 I'm not related to Gaussian Inc. in any way.
 
@@ -75,14 +75,14 @@ I'm not related to Gaussian Inc. in any way.
  * [galloc:  could not allocate memory.](#3500)
 ### Difficult cases
  * [NtrErr Called from XXXXXX.](#3600)
-### Gaussian Bug 的“样式”及发现Bug后的可能做法
+### What does a Gaussian Bug look like
  * [Is it a bug?](#3700)
 ### Abnormal situations that doesn't give an error message
- * [IRC提前停止或折返](#3800)
- * [优化后的结构有一个或几个小虚频](#3900)
- * [G09 Windows 在 L1.exe 左右无报错退出](#4000)
- * [GaussView观看结构有异常的成键、断键](#4100)
- * [GaussView 中显示的 IRC 在零点附近出现异常的低能点](#4200)
+ * [IRC job stopped prematuraly, or goes in the another direction](#3800)
+ * [One or more small imaginary frequencies after optimization](#3900)
+ * [G09 Windows exit at L1.exe without an error message](#4000)
+ * [Abnormal bonding / unbonding in GaussView](#4100)
+ * [Viewing IRC jobs in GaussView, it gives an abnormally low energy point at the X=0 point](#4200)
 ### Normal outputs that could be mistanken as errors
  * [Warning!!: The largest alpha MO coefficient is...](#4800)
  * [Warning!!: The smallest alpha delta epsilon is...](#4800)
@@ -91,12 +91,12 @@ I'm not related to Gaussian Inc. in any way.
  * [No special actions if energy rises.](#5100)
  * [DIIS: error](#5200)
  * [End of XXXXXX F.D. properties file   XXX does not exist.](#5300)
-### Other common entry-level questions
- * [GaussView 打开 chk 或 fchk 文件报错 Missing or bad data: Alpha Orbital Energies](#4300)
- * [“这种计算大约需多长时间？”](#4400)
- * [如何通过柔性扫描产生较好的过渡态初猜](#4500)
- * [如何在量化计算中设定原子/片段的电荷](#4600)
- * [如何计算 Activation Strain (Distortion-Interaction) Energy](#4700)
+### Other common questions
+ * [When opening chk or fchk files with GaussView: Missing or bad data: Alpha Orbital Energies](#4300)
+ * [“How long will this calculation takes?”](#4400)
+ * [How to generate an inital guess for transition state geometry optimization with flexiable scan](#4500)
+ * [“How to put a charge / electron on this atom / fragment?"](#4600)
+ * [How to calculate activation-strain (distortion-interaction) energy](#4700)
 
 ## Explanation and solution for the errors
 For ones who would like to read this in whole, the order of the following sections is different from the [list of errors](#List-of-errors) above. Use the anchor links if you would like to navigate to specific errors.
@@ -235,7 +235,7 @@ For ones who would like to read this in whole, the order of the following sectio
 #
 <a name="3700"></a>
 ### Probably known bugs
-####  · Gaussian Bug 的“样式”及发现Bug后的可能做法
+####  · What does a Gaussian Bug look like?
 Some known bugs:
  * L103，Bad arguments to LAPack or BLAS routine.
  * L401，Diagonalization in DiagDN via DSPEV failed.
@@ -266,33 +266,33 @@ Some known bugs:
 #
 ### Abnormal situations that doesn't give an error message
 <a name="3800"></a>
-####  · IRC提前停止或折返
+####  · IRC job stopped prematuraly, or goes in the another direction
 #
 <a name="3900"></a>
-####  · 优化后的结构有一个或几个小虚频
+####  · One or more small imaginary frequencies after optimization
 #
 <a name="4000"></a>
-####  · G09 Windows 在 L1.exe 左右无报错退出
+####  · G09 Windows exit at L1.exe without an error message
 #
 <a name="4100"></a>
-####  · GaussView观看结构有异常的成键、断键
+####  · Abnormal bonding / unbonding in GaussView
 #
 <a name="4200"></a>
-####  · GaussView 中显示的 IRC 在零点附近出现异常的低能点
+####  · Viewing IRC jobs in GaussView, it gives an abnormally low energy point at the X=0 point
 #
 <a name="4300"></a>
-####  · GaussView 打开 chk 或 fchk 文件报错 Missing or bad data: Alpha Orbital Energies
+####  · "Missing or bad data: Alpha Orbital Energies" when opening chk or fchk files with GaussView
 #
 <a name="4400"></a>
 ### Other common entry-level questions
-####  · “这种计算大约需多长时间？”
+####  · “How long will this calculation takes?”
 #
 <a name="4500"></a>
-####  · 如何通过柔性扫描产生较好的过渡态初猜
+####  · How to generate an inital guess for transition state geometry optimization with flexiable scan
 #
 <a name="4600"></a>
-####  · 如何在量化计算中设定原子/片段的电荷
+####  · “How to put a charge / electron on this atom / fragment?"
 #
 <a name="4700"></a>
-####  · 如何计算 Activation Strain (Distortion-Interaction) Energy
+####  · How to calculate activation-strain (distortion-interaction) energy
 #
