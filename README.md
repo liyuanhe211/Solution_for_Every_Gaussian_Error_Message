@@ -7,7 +7,7 @@ Using (part of) this blog in commercial setting (or for any profitable action) i
 
 ## List of errors
 ### General errors
- * Severe Error Message # 2070 (Windows)
+ * [Severe Error Message # 2070 (Windows)](#SevereErrorMessage)
  * segmentation violation/segmentation fault (Linux)
 ### QM related errors
             · L1    ，ntrex1
@@ -91,5 +91,6 @@ Using (part of) this blog in commercial setting (or for any profitable action) i
 ## Explanation and solution for the errors
 For ones who would like to read this in whole, the order of the following sections is different from the [list of errors](#List-of-errors) above. Use the anchor links if you would like to navigate to specific errors.
 
- * Severe Error Message # 2070 (Windows)
- * segmentation violation/segmentation fault (Linux)
+<a name="SevereErrorMessage"></a>
+### Severe Error Message # 2070 (Windows)
+### segmentation violation/segmentation fault (Linux)
