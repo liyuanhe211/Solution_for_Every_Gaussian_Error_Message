@@ -181,9 +181,11 @@ This is one of the most common problems in daily operations. The SCF (self-consi
 
 Before finding solutions, you need to identify specifically how is the convergence going. To do this, you need to replace the `#` to `#p` in your route card to show details of SCF iteration (I suggest always doing this, except for special jobs like ONIOM with a large molecule). You can plot the `E = -XXX.XXXXX` in each cycle, zoom in to the graph so that the changes in the later cycles are clearly visible (referred to as "the curve" later). From the curve, you may find a few scenarios, and you should deal with each one of them separately:
 
-1. **Fluctuation at initial stage**: The curve is fluctuating, and the convergence (given by `NFock=128  Conv=XXXXD-XX` in the output) is far from the threshold, usually larger than 10^-3 hartree). The fluctuation can be somewhat chaotic, or can also be oscillating with a fixed period.
+1. **Fluctuation at initial stage**: The curve is fluctuating, and the convergence (given by `NFock=128  Conv=XXXXD-XX` in the output) is far from the threshold, usually larger than 10^-3 hartree). The fluctuation can be somewhat chaotic:
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134804057-5b071d62-cbfa-42f3-9876-b09b1b6b28d2.png" width="30%" height="30%"></img></p>
+
+or can also be oscillating with a fixed period:
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134804352-bcb54e9f-80fe-4f51-807e-08d6a3f8a54e.png" width="30%" height="30%" align="center"></img></p>
 
