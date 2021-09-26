@@ -136,6 +136,89 @@ On the windows version of the Gaussian, the output might not update when the err
 ### SCF Convergence
 <a name="100"></a>
 ####  · L502，Convergence failure :hourglass_flowing_sand:
+
+**· Example:**
+
+
+     Cycle 128  Pass 1  IDiag  1:
+     RMSU=  9.02D-07    CP:  1.00D+00  9.48D-01  3.00D+00  1.61D+00  1.30D+00
+                        CP:  1.61D+00  1.46D+00
+     E= -14914.8006510842     Delta-E=        0.000260457560 Rises=F Damp=F
+     DIIS: error= 1.39D-02 at cycle 128 NSaved=  20.
+     NSaved=20 IEnMin=16 EnMin= -14923.1431281454     IErMin= 8 ErrMin= 8.37D-03
+     ErrMax= 1.39D-02  0.00D+00 EMaxC= 1.00D-01 BMatC= 8.92D-01 BMatP= 4.53D-01
+     IDIUse=2 WtCom= 0.00D+00 WtEn= 1.00D+00
+     EnCoef did    94 forward-backward iterations
+     Coeff-En:   0.837D-01 0.000D+00 0.544D-01 0.287D+00 0.818D-03 0.000D+00
+     Coeff-En:   0.000D+00 0.000D+00 0.149D+00 0.485D-05 0.228D-01 0.144D-03
+     Coeff-En:   0.903D-02 0.129D-03 0.778D-04 0.393D+00 0.216D-03 0.313D-03
+     Coeff-En:   0.237D-03 0.376D-03
+     Coeff:      0.837D-01 0.000D+00 0.544D-01 0.287D+00 0.818D-03 0.000D+00
+     Coeff:      0.000D+00 0.000D+00 0.149D+00 0.485D-05 0.228D-01 0.144D-03
+     Coeff:      0.903D-02 0.129D-03 0.778D-04 0.393D+00 0.216D-03 0.313D-03
+     Coeff:      0.237D-03 0.376D-03
+     Gap=     0.015 Goal=   None    Shift=    0.000
+     RMSDP=1.87D-06 MaxDP=3.06D-04 DE= 2.60D-04 OVMax= 8.02D-05
+
+     >>>>>>>>>> Convergence criterion not met.
+     Error on total polarization charges = ********
+     SCF Done:  E(RPBE1PBE) =  -14914.8006511     A.U. after  129 cycles
+                NFock=128  Conv=0.19D-05     -V/T= 4.2204
+     KE= 4.631417055578D+03 PE=-4.911726716823D+04 EE= 7.213578297303D+03
+     SMD-CDS (non-electrostatic) energy       (kcal/mol) =      -6.81
+     (included in total energy above)
+     Convergence failure -- run terminated.
+     Error termination via Lnk1e in /gpfs/share/home/1501110295/g16/l502.exe at Tue Mar 31 23:16:51 2020.
+     Job cpu time:       7 days 18 hours 47 minutes 16.6 seconds.
+     Elapsed time:       0 days  5 hours 57 minutes 42.6 seconds.
+     File lengths (MBytes):  RWF=   3744 Int=      0 D2E=      0 Chk=    176 Scr=     32
+
+**· Explanation**
+
+This is one of the most common problems in daily operations. The SCF (self-consistent field) iteration is not converged to below the threshold you designated (scf=conv=XX, default 1D-8) within the maximum number of cycles (scf=maxcyc=XX, default 128 cycles) you designated.
+
+**· Identify the problem**
+
+Before finding solutions, you need to identify specifically how is the convergence going. To do this, you need to replace the `#` to `#p` in your route card to show details of SCF iteration (I suggest always doing this, except for special jobs like ONIOM with a large molecule). You can plot the `E = -XXX.XXXXX` in each cycle, zoom in to the graph so that the changes in the later cycles are clearly visible (referred to as "the curve" later). From the curve, you may find a few scenarios, and you should deal with each one of them separately:
+
+1. **Fluctuation at initial stage**: The curve is fluctuating, and the convergence (given by `NFock=128  Conv=XXXXD-XX` in the output) is far from the threshold, usually larger than 10^-3 hartree). The fluctuation can be somewhat chaotic, or can also be oscillating with a fixed period.
+![image](https://user-images.githubusercontent.com/18537705/134804057-5b071d62-cbfa-42f3-9876-b09b1b6b28d2.png)
+![image](https://user-images.githubusercontent.com/18537705/134804352-bcb54e9f-80fe-4f51-807e-08d6a3f8a54e.png)
+(please ignore the vertical axis, this is an output of my `QM Monitor` program, and the vertical axis does not linearly correspond to energy.)
+2. **Fluctuation at later stage**: same with above, just the convergence is closer to the threshold, like 10^-5 hartree or below
+3. **Monotonous decline**: The curve is monotonously declining (it's ok to have a few points as exceptions to the monotonous trend), but doesn't converge at maxcyc.
+![image](https://user-images.githubusercontent.com/18537705/134804908-2b72744f-0fc7-42d6-9bed-22692adbbf54.png)
+4. **Any curve shape with drastically different electronic energy with similar structure** (for example, during optimization). For example, the image and output represent a job that ends with an SCF convergent failure. The last step has an SCF energy several hundred hartree higher than previous ones. Reviewing the optimization process (Image below, right), you can see the optimization kinda goes haywire (the forces and displacements don't look right) at around step 39. which is reflexed in the jump of his SCF energy (despite it has converged). Steps 50 and 56 (highlighted with arrow) also have energy tens of hartrees above the normal ones. This usually indicated a deeper problem than just SCF convergence problem and could be raised from dividing a very small number and results in a very large numerical error. The small number could be caused by the linear dependency of the basis sets or solvation cavity problems (see the section[L502/L508，Inv3 failed in PCMMkU](#2100)).
+![image](https://user-images.githubusercontent.com/18537705/134805076-4bfd9d2b-b85c-41a8-b43f-641ca2e593e7.png)
+    Opt Step 37:  SCF Done:  E(RB-P86) =  -3825.13282335     A.U. after   12 cycles
+    Opt Step 38:  SCF Done:  E(RB-P86) =  -3825.13719799     A.U. after   11 cycles
+    --> Opt Step 39:  SCF Done:  E(RB-P86) =  -3825.10522704     A.U. after   13 cycles
+    Opt Step 40:  SCF Done:  E(RB-P86) =  -3825.13602726     A.U. after   12 cycles
+    Opt Step 41:  SCF Done:  E(RB-P86) =  -3825.13709759     A.U. after    8 cycles
+    Opt Step 42:  SCF Done:  E(RB-P86) =  -3825.13718461     A.U. after    7 cycles
+    Opt Step 43:  SCF Done:  E(RB-P86) =  -3825.13719706     A.U. after    1 cycles
+    Opt Step 44:  SCF Done:  E(RB-P86) =  -3825.13719791     A.U. after    1 cycles
+    Opt Step 45:  SCF Done:  E(RB-P86) =  -3825.13222362     A.U. after   12 cycles
+    Opt Step 46:  SCF Done:  E(RB-P86) =  -3825.13968083     A.U. after   12 cycles
+    Opt Step 47:  SCF Done:  E(RB-P86) =  -3825.13599635     A.U. after   13 cycles
+    Opt Step 48:  SCF Done:  E(RB-P86) =  -3825.13662431     A.U. after   12 cycles
+    Opt Step 49:  SCF Done:  E(RB-P86) =  -3825.13636208     A.U. after   12 cycles
+    --> Opt Step 50:  SCF Done:  E(RB-P86) =  -3845.72449495     A.U. after   54 cycles
+    Opt Step 51:  SCF Done:  E(RB-P86) =  -3825.13665330     A.U. after   20 cycles
+    Opt Step 52:  SCF Done:  E(RB-P86) =  -3825.13647203     A.U. after   23 cycles
+    Opt Step 53:  SCF Done:  E(RB-P86) =  -3825.13594059     A.U. after   26 cycles
+    Opt Step 54:  SCF Done:  E(RB-P86) =  -3825.13482223     A.U. after   26 cycles
+    Opt Step 55:  SCF Done:  E(RB-P86) =  -3825.13408631     A.U. after   35 cycles
+    --> Opt Step 56:  SCF Done:  E(RB-P86) =  -3888.91182114     A.U. after   73 cycles
+    Opt Step 57:  SCF Done:  E(RB-P86) =  -3825.13665328     A.U. after   22 cycles
+    Opt Step 58:  SCF Done:  E(RB-P86) =  -3825.13647358     A.U. after   25 cycles
+    Opt Step 59:  SCF Done:  E(RB-P86) =  -3825.13595614     A.U. after   26 cycles
+    Opt Step 60:  SCF Done:  E(RB-P86) =  -3825.13490799     A.U. after   27 cycles
+    Opt Step 61:  SCF Done:  E(RB-P86) =  -3825.13382018     A.U. after   30 cycles
+    --> Opt Step 62:  SCF Done:  E(RB-P86) =  -4207.17296836     A.U. after  129 cycles
+    
+**· Solution**:hourglass_flowing_sand:
+
 #
 <a name="200"></a>
 ####  · L508，Convergence failure :hourglass_flowing_sand:
