@@ -182,14 +182,21 @@ This is one of the most common problems in daily operations. The SCF (self-consi
 Before finding solutions, you need to identify specifically how is the convergence going. To do this, you need to replace the `#` to `#p` in your route card to show details of SCF iteration (I suggest always doing this, except for special jobs like ONIOM with a large molecule). You can plot the `E = -XXX.XXXXX` in each cycle, zoom in to the graph so that the changes in the later cycles are clearly visible (referred to as "the curve" later). From the curve, you may find a few scenarios, and you should deal with each one of them separately:
 
 1. **Fluctuation at initial stage**: The curve is fluctuating, and the convergence (given by `NFock=128  Conv=XXXXD-XX` in the output) is far from the threshold, usually larger than 10^-3 hartree). The fluctuation can be somewhat chaotic, or can also be oscillating with a fixed period.
-<img src="https://user-images.githubusercontent.com/18537705/134804057-5b071d62-cbfa-42f3-9876-b09b1b6b28d2.png" width="50%" height="50%">
-![image](https://user-images.githubusercontent.com/18537705/134804352-bcb54e9f-80fe-4f51-807e-08d6a3f8a54e.png)
+
+<img src="https://user-images.githubusercontent.com/18537705/134804057-5b071d62-cbfa-42f3-9876-b09b1b6b28d2.png" width="30%" height="30%"></img>
+
+<img src="https://user-images.githubusercontent.com/18537705/134804352-bcb54e9f-80fe-4f51-807e-08d6a3f8a54e.png" width="30%" height="30%"></img>
+
 (please ignore the vertical axis, this is an output of my `QM Monitor` program, and the vertical axis does not linearly correspond to energy.)
 2. **Fluctuation at later stage**: same with above, just the convergence is closer to the threshold, like 10^-5 hartree or below
 3. **Monotonous decline**: The curve is monotonously declining (it's ok to have a few points as exceptions to the monotonous trend), but doesn't converge at maxcyc.
-![image](https://user-images.githubusercontent.com/18537705/134804908-2b72744f-0fc7-42d6-9bed-22692adbbf54.png){:height="50%" width="50%"}
+
+<img src="https://user-images.githubusercontent.com/18537705/134804908-2b72744f-0fc7-42d6-9bed-22692adbbf54.png" width="30%" height="30%"></img>
+
 4. **Any curve shape with drastically different electronic energy with similar structure** (for example, during optimization). For example, the image and output represent a job that ends with an SCF convergent failure. The last step has an SCF energy several hundred hartree higher than previous ones. Reviewing the optimization process (Image below, right), you can see the optimization kinda goes haywire (the forces and displacements don't look right) at around step 39. which is reflexed in the jump of his SCF energy (despite it has converged). Steps 50 and 56 (highlighted with arrow) also have energy tens of hartrees above the normal ones. This usually indicated a deeper problem than just SCF convergence problem and could be raised from dividing a very small number and results in a very large numerical error. The small number could be caused by the linear dependency of the basis sets or solvation cavity problems (see the section[L502/L508，Inv3 failed in PCMMkU](#2100)).
-![image](https://user-images.githubusercontent.com/18537705/134805076-4bfd9d2b-b85c-41a8-b43f-641ca2e593e7.png){:height="50%" width="50%"}
+5. 
+<img src="https://user-images.githubusercontent.com/18537705/134805076-4bfd9d2b-b85c-41a8-b43f-641ca2e593e7.png" width="30%" height="30%"></img>
+
     Opt Step 37:  SCF Done:  E(RB-P86) =  -3825.13282335     A.U. after   12 cycles
     Opt Step 38:  SCF Done:  E(RB-P86) =  -3825.13719799     A.U. after   11 cycles
     --> Opt Step 39:  SCF Done:  E(RB-P86) =  -3825.10522704     A.U. after   13 cycles
