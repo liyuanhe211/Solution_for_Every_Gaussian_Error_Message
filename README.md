@@ -181,7 +181,7 @@ This is one of the most common problems in daily operations. The SCF (self-consi
 
 Before finding solutions, you need to identify specifically how is the convergence going. To do this, you need to replace the `#` to `#p` in your route card to show details of SCF iteration (I suggest always doing this, except for special jobs like ONIOM with a large molecule). You can plot the `E = -XXX.XXXXX` in each cycle, zoom in to the graph so that the changes in the later cycles are clearly visible (referred to as "the curve" later). From the curve, you may find a few scenarios, and you should deal with each one of them separately:
 
-1. **Fluctuation at initial stage**: The curve is fluctuating, and the convergence (given by `NFock=128  Conv=XXXXD-XX` in the output) is far from the threshold, usually larger than 10^-3 hartree). The fluctuation can be somewhat chaotic:
+1. **\[Fluctuation at initial stage\]**: The curve is fluctuating, and the convergence (given by `NFock=128  Conv=XXXXD-XX` in the output) is far from the threshold, usually larger than 10^-3 hartree). The fluctuation can be somewhat chaotic:
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134804057-5b071d62-cbfa-42f3-9876-b09b1b6b28d2.png" width="30%" height="30%"></img></p>
 
@@ -191,13 +191,13 @@ or can also be oscillating with a fixed period:
 
 (please ignore the vertical axis, this is an output of my `QM Monitor` program, and the vertical axis does not linearly correspond to energy.)
 
-2. **Fluctuation at later stage**: same with above, just the convergence is closer to the threshold, like 10^-5 hartree or below
+2. **\[Fluctuation at later stage\]**: same with above, just the convergence is closer to the threshold, like 10^-5 hartree or below
 
-4. **Monotonous decline**: The curve is monotonously declining (it's ok to have a few points as exceptions to the monotonous trend), but doesn't converge at maxcyc.
+3. **\[Monotonous decline\]**: The curve is monotonously declining (it's ok to have a few points as exceptions to the monotonous trend), but doesn't converge at maxcyc. This situation is exceedingly rare. I believe I've only encountered this less than 5 times in all my calculations, and interestingly, several of them involves lanthanide atoms. 
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134804908-2b72744f-0fc7-42d6-9bed-22692adbbf54.png" width="30%" height="30%" align="center"></img></p>
 
-4. **SCF (curve shape irrelevant) with drastically different electronic energy with similar structure** (for example, during optimization). For example, the image and output represent a job that ends with an SCF convergent failure. The last step has an SCF energy several hundred hartree higher than previous ones. Reviewing the optimization process (Image below, right), you can see the optimization kinda goes haywire (the forces and displacements don't look right) at around step 39. which is reflexed in the jump of his SCF energy (despite it has converged). Steps 50 and 56 (highlighted with arrow) also have energy tens of hartrees above the normal ones. This usually indicated a deeper problem than just SCF convergence problem and could be raised from dividing a very small number and results in a very large numerical error. The small number could be caused by the linear dependency of the basis sets or solvation cavity problems (see the section [L502/L508，Inv3 failed in PCMMkU](#2100)).
+4. **\[SCF (curve shape irrelevant) with drastically different electronic energy for similar structures\]** (for example, during optimization). For example, the image and output below represent a job that ends with an SCF convergent failure. The last step has an SCF energy several hundred hartree higher than previous ones. Reviewing the optimization process (Image below, right), you can see the optimization kinda goes haywire (the forces and displacements don't look right) at around step 39. which is reflexed in the jump of his SCF energy (despite it has converged). Steps 50 and 56 (highlighted with arrow) also have energy tens of hartrees above the normal ones. This usually indicated a deeper problem than just SCF convergence problem and could be raised from dividing a very small number and results in a very large numerical error. The small number could be caused by the linear dependency of the basis sets or solvation cavity problems (see the section [L502/L508，Inv3 failed in PCMMkU](#2100)).
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134805076-4bfd9d2b-b85c-41a8-b43f-641ca2e593e7.png" width="50%" height="50%" align="center"></img></p>
 
@@ -229,6 +229,61 @@ or can also be oscillating with a fixed period:
     --> Opt Step 62:  SCF Done:  E(RB-P86) =  -4207.17296836     A.U. after  129 cycles
     
 **· Solution**:hourglass_flowing_sand:
+
+First of all, there is almost no keyword that can systematically increase the chance of convergence in everyday calculation. I suggest against adding any additional SCF-related keywords to your input file (i.e., keep it as the default).
+
+(Many of the following content in this section referenced [this Chinese post](http://sobereva.com/61) by Sobereva.)
+
+1. For **\[Monotonous decline\]** ONLY, use `scf=maxcyc=XX` (choose a number larger than 128) to increase the maximum number of cycles. As I mentioned before, this is a rare situation, and this keyword is heavily abused on the internet. Use this keyword in any other situations will only caused you unnecessary CPU times. And it is a sign of ignorance if you see someone write this option as his "default option" (i.e. write this to all the input files).
+
+2. For **\[Fluctuation at initial stage\]**, first try one or a combination of several of the keywords below:
+   - `SCF=NoVarAcc`: In L502 output, you can see this sentence `Initial convergence to 1.0D-05 achieved.  Increase integral accuracy.` (example below), which means before this step, as the SCF is far from convergent, Gaussian will use a lower integration accuracy to save time. However this may cause SCF fluctuation, in that case, disabling it may solve the problem. Adding this keyword will almost nevel cause a convergent SCF to become divergent, but it will likely cause an increase in the computation time. 
+```
+     Coeff:      0.113D+00 0.365D+00 0.534D+00
+     Gap=     0.125 Goal=   None    Shift=    0.000
+     RMSDP=9.29D-06 MaxDP=3.04D-03 DE=-3.18D-03 OVMax= 3.90D-03
+
+     Cycle  10  Pass 0  IDiag  1:
+     RMSU=  6.05D-06    CP:  9.87D-01  6.50D-01  1.65D-01  6.63D-02  6.41D-01
+                        CP:  6.58D-01  7.67D-01  8.17D-01  7.24D-01
+     E= -13297.5461801855     Delta-E=       -0.000664594365 Rises=F Damp=F
+     DIIS: error= 2.05D-04 at cycle  10 NSaved=  10.
+     NSaved=10 IEnMin=10 EnMin= -13297.5461801855     IErMin=10 ErrMin= 2.05D-04
+     ErrMax= 2.05D-04  0.00D+00 EMaxC= 1.00D-01 BMatC= 1.37D-04 BMatP= 8.51D-04
+     IDIUse=3 WtCom= 9.98D-01 WtEn= 2.05D-03
+     Coeff-Com: -0.513D-03 0.181D-02-0.342D-02 0.137D-02-0.404D-02-0.120D-01
+     Coeff-Com:  0.518D-02 0.669D-01 0.176D+00 0.769D+00
+     Coeff-En:   0.000D+00 0.000D+00 0.000D+00 0.000D+00 0.000D+00 0.000D+00
+     Coeff-En:   0.000D+00 0.000D+00 0.000D+00 0.100D+01
+     Coeff:     -0.511D-03 0.180D-02-0.341D-02 0.137D-02-0.404D-02-0.120D-01
+     Coeff:      0.517D-02 0.668D-01 0.176D+00 0.769D+00
+     Gap=     0.123 Goal=   None    Shift=    0.000
+     RMSDP=4.95D-06 MaxDP=6.20D-04 DE=-6.65D-04 OVMax= 1.54D-03
+
+     --> Initial convergence to 1.0D-05 achieved.  Increase integral accuracy.
+     Cycle  11  Pass 1  IDiag  1:
+     E= -13297.5469692442     Delta-E=       -0.000789058700 Rises=F Damp=F
+     DIIS: error= 2.66D-04 at cycle   1 NSaved=   1.
+     NSaved= 1 IEnMin= 1 EnMin= -13297.5469692442     IErMin= 1 ErrMin= 2.66D-04
+     ErrMax= 2.66D-04  0.00D+00 EMaxC= 1.00D-01 BMatC= 3.14D-04 BMatP= 3.14D-04
+     IDIUse=3 WtCom= 9.97D-01 WtEn= 2.66D-03
+     Coeff-Com:  0.100D+01
+     Coeff-En:   0.100D+01
+     Coeff:      0.100D+01
+     Gap=     0.117 Goal=   None    Shift=    0.000
+     RMSDP=4.95D-06 MaxDP=6.20D-04 DE=-7.89D-04 OVMax= 4.47D-03
+
+     Cycle  12  Pass 1  IDiag  1:
+     RMSU=  7.87D-05    CP:  1.00D+00
+     E= -13297.5470667379     Delta-E=       -0.000097493670 Rises=F Damp=F
+```
+
+   - 
+
+3. For **\[Fluctuation at later stage\]**:
+   - `Int=UltraFine`: 【When it is useful】For methods (basically DFT only) that use a grid-based numerical integration, insufficient grid quality could cause small numerical error that's just larger than the convergent threshold of SCF (and for the same reason, this is not likely to help flucturation at early stage of SCF). The [Minnesota functionals](https://en.wikipedia.org/wiki/Minnesota_functionals) are kinda notorious for their higher requirement for grid quality. Thus this is the prime recommendation if that is the case. I have examples where this keyword help with other functionals, but it's rarer than the Minnesota functionals. 【G16】Note that since Gaussian 16, the default option has already become Int=Ultrafine. So unless you specifically lowered it to Int=Fine, there is no need to write Int=Ultrafine explicitly. 【Comparablity】Energies at different integration grid is not comparable. If you raise the integration grid for one structure, you need to re-run all the calculations for which you are getting a difference in energy with that structure. One exception is that you can optimize the structure with Int=UltraFine grid, but do a Int=Find grid single point calculation to get the correct electronic energy, and add the later electronic energy with the thermodynamic correction at Int=UltraFine grid (This is because the intregration grid is not likely to greately affect the PES). You need to clearly state what integration grid you used in the Supporting Information of your publication (for repeatability). 【About SuperFine】There is a higher grid Int=SuperFine, however Int=UltraFine is usually good enough, and it is unlikely that SuperFine grid will solve SCF divergence, unless you are requiring some uncommon SCF threshold. 
+4. 
+5. Danger zone
 
 #
 <a name="200"></a>
