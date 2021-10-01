@@ -278,13 +278,56 @@ First of all, there is almost no keyword that can systematically increase the ch
      E= -13297.5470667379     Delta-E=       -0.000097493670 Rises=F Damp=F
 ```
 
-   - 
+   - `SCF=NoIncFock`: Incremental Fock matrix build is an accelaration technique where the Fock matrix is computed recursively using the difference density of the last 2 SCF cycles. This could drastically lower the scaling of the Fock matrix build. However, this may cause fluctuation especially when diffuse functions are used. To solve this, use `SCF=NoIncFock` turns off incremental Fock matrix build. This will results in higher cost of each SCF cycle.
+
+   - `IOp(5/37=N)`: By default, Gaussian will rebuild the Fock matrix in full for every 20 cycles of SCF iteration: `IOp(5/37)=20` by default. This is shown as `Fock matrices will be formed incrementally for  20 cycles.` and `Restarting incremental Fock formation.` in the Gaussian output (example of output below). You can select a N<20, and involke the IOp(5/37=N) option to form the fock matrix every N SCF cycles. The relashionship between `SCF=NoIncFock` and `IOp(5/37=N)` are similar to `opt=CalcAll` and `opt=Recalc=N`.
+
+```
+ Requested convergence on             energy=1.00D-06.
+ No special actions if energy rises.
+ --> Fock matrices will be formed incrementally for  20 cycles.
+
+ Cycle   1  Pass 1  IDiag  1:
+ FoFJK:  IHMeth= 1 ICntrl=       0 DoSepK=F KAlg= 0 I1Cent=           0 FoldK=F
+ IRaf= 990000000 NMat=       1 IRICut=       1 DoRegI=T DoRafI=F ISym2E= 0 IDoP0=0 IntGTp=1.
+ FoFCou: FMM=T IPFlag=           0 FMFlag=      100000 FMFlg1=        2001
+ ...
+ ...
+ ...
+ Coeff:     -0.634D-05 0.481D-03-0.104D-02 0.243D-02-0.167D-02 0.429D-02
+ Coeff:      0.217D-02 0.976D-02-0.371D-01-0.324D-01 0.394D-02 0.132D+00
+ Coeff:      0.254D+00 0.663D+00
+ Gap=     0.029 Goal=   None    Shift=    0.000
+ RMSDP=1.13D-03 MaxDP=7.30D-02 DE=-4.18D-04 OVMax= 1.76D-02
+
+ Cycle  21  Pass 1  IDiag  1:
+ --> Restarting incremental Fock formation.
+ E= -1315.53915604307     Delta-E=       -0.000105907567 Rises=F Damp=F
+ DIIS: error= 1.06D-04 at cycle  21 NSaved=  20.
+ NSaved=20 IEnMin=20 EnMin= -1315.53915604307     IErMin=20 ErrMin= 1.06D-04
+ ...
+ ...
+ ...
+ Coeff:      0.627D-01 0.170D+00-0.268D+00-0.291D+00-0.212D+01 0.175D+01
+ Coeff:     -0.254D+01 0.241D+01-0.587D+00 0.111D+01 0.166D+01-0.269D+01
+ Coeff:     -0.561D+01 0.530D+01-0.209D+01 0.473D+01
+ Gap=     0.052 Goal=   None    Shift=    0.000
+ RMSDP=7.12D-04 MaxDP=8.59D-02 DE=-5.43D-03 OVMax= 4.24D-03
+
+ Cycle  41  Pass 1  IDiag  1:
+ --> Restarting incremental Fock formation.
+ E= -5974.52121524936     Delta-E=       -0.000886211828 Rises=F Damp=F
+ DIIS: error= 8.43D-03 at cycle  41 NSaved=  17.
+ NSaved=17 IEnMin=11 EnMin= -5976.91129255226     IErMin=10 ErrMin= 6.51D-03
+ ```
+
 
 3. For **\[Fluctuation at later stage\]**:
-   - `Int=UltraFine`: 【When it is useful】For methods (basically DFT only) that use a grid-based numerical integration, insufficient grid quality could cause small numerical error that's just larger than the convergent threshold of SCF (and for the same reason, this is not likely to help flucturation at early stage of SCF). The [Minnesota functionals](https://en.wikipedia.org/wiki/Minnesota_functionals) are kinda notorious for their higher requirement for grid quality. Thus this is the prime recommendation if that is the case. I have examples where this keyword help with other functionals, but it's rarer than the Minnesota functionals. 【G16】Note that since Gaussian 16, the default option has already become Int=Ultrafine. So unless you specifically lowered it to Int=Fine, there is no need to write Int=Ultrafine explicitly. 【Comparablity】Energies at different integration grid is not comparable. If you raise the integration grid for one structure, you need to re-run all the calculations for which you are getting a difference in energy with that structure. One exception is that you can optimize the structure with Int=UltraFine grid, but do a Int=Find grid single point calculation to get the correct electronic energy, and add the later electronic energy with the thermodynamic correction at Int=UltraFine grid (This is because the intregration grid is not likely to greately affect the PES). You need to clearly state what integration grid you used in the Supporting Information of your publication (for repeatability). 【About SuperFine】There is a higher grid Int=SuperFine, however Int=UltraFine is usually good enough, and it is unlikely that SuperFine grid will solve SCF divergence, unless you are requiring some uncommon SCF threshold. 
+   - `Int=UltraFine`: 【When it is useful】For methods that use a grid-based numerical integration (DFT only), insufficient grid quality could cause small numerical error that's just larger than the convergent threshold of SCF (and for the same reason, this is not likely to help flucturation at early stage of SCF). The [Minnesota functionals](https://en.wikipedia.org/wiki/Minnesota_functionals) are kinda notorious for their higher requirement for grid quality. Thus this is the prime recommendation if that is the case. I have examples where this keyword help with other functionals, but it's rarer than the Minnesota functionals. 【G16】Note that since Gaussian 16, the default option has already become `Int=Ultrafine`. So unless you specifically lowered it to `Int=Fine`, there is no need to write Int=Ultrafine explicitly. 【Comparablity】Energies at different integration grid is not comparable. If you raise the integration grid for one structure, you need to re-run all the calculations for which you are getting a difference in energy with that structure. One exception is that you can optimize the structure with Int=UltraFine grid, but do a Int=Find grid single point calculation to get the correct electronic energy, and add the later electronic energy with the thermodynamic correction at Int=UltraFine grid (This is because the intregration grid is not likely to greately affect the PES). You need to clearly state what integration grid you used in the Supporting Information of your publication (for repeatability). 【About SuperFine】There is a higher grid `Int=SuperFine`, however Int=UltraFine is usually good enough, and it is unlikely that SuperFine grid will solve SCF divergence, unless you are requiring some uncommon SCF threshold. 
 4. 
 5. Danger zone
-
+   - `IOp(5/13=1)`: 
+   
 #
 <a name="200"></a>
 ####  · L508，Convergence failure :hourglass_flowing_sand:
