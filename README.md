@@ -402,6 +402,11 @@ First of all, there is almost no keyword that can systematically increase the ch
         @/path/to/your/ma-TZVP.basis
         ```
 
+     - If you are doing calculation with an anion (-1 1), use the cation (2-electron less, 1 1) as the guess. This could work with neutual molecules, where you use the (2 1) state as the guess, but that has a lesser effect than the anion to cation case.
+     - If you are doing calculation with an radical (0 2), use the closed shell cation as the guess (1 1).
+     - If you know a similar but different geometry that can results in a converged SCF, use that as guess. This usually works when a bond is being broken, while a longer or shorter bond distance could work. Also be aware of potential polarized singlet problem. And sometimes just randomly change the geometry also works (if that is the case, be vigilant whether there are problem about [solvent cavity](#2100))
+     - 
+
    - **Use a different guess method**: 
 
 3. For **\[Fluctuation at later stage\]**:
