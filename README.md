@@ -649,7 +649,6 @@ SDD
 Co
 SDD
 ```
-```
 则新的输入文件应为（注意共3处不同）:
 ```
 #p B3LYP/genecp opt=modredundant freq
