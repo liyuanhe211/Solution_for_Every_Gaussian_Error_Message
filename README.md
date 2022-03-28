@@ -1,4 +1,4 @@
-# Solutions for Gaussian Error Messages (migration work in progress :hourglass_flowing_sand:)
+# Solutions for Gaussian Error Messages (translation in progress :hourglass_flowing_sand:)
 This is an article containing reliable explanations and ways to solve the error messages for almost all common Gaussian quantum chemistry programs. This is a per request English translation for [a long blog in Chinese](http://bbs.keinsci.com/thread-4829-1-1.html) I wrote a few years back. I wrote the original Chinese post as there is almost no reliable list of how to solve the errors. Similar online resources online are neither comprehensive nor accurate.
 
 This blog is for people with basic knowledge of how Gaussian works, what's the basic structure of Gaussian files, and a basic understanding of quantum chemistry.
