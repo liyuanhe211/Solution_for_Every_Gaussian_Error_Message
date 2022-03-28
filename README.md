@@ -105,7 +105,7 @@ For ones who would like to read this in whole, the order of the following sectio
 ####  :arrow_forward: Severe Error Message # 2070 (Windows) 
 ####  :arrow_forward: segmentation violation/segmentation fault (Linux) 
 
-**· Example:**
+**➤ Example:**
 
 
 Linux
@@ -122,11 +122,11 @@ Windows
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134765617-ca4a7f87-8fb0-4c83-93e1-e4c1deac7418.png" width="80%" height="80%" align="center"></img></p>
 
-**· Explanation**
+**➤ Explanation**
 
 This is just a message saying "Something is wrong" without any specific information. 
 
-**· Solution**
+**➤ Solution**
 
 As there is no info on the specific error, any method you got online for _"how to solve the Gaussian 2070 error"_ is nonsense. You should look at the (end of the) output file to see the specific reason for the error.
 
@@ -137,7 +137,7 @@ On the windows version of the Gaussian, the output might not update when the err
 <a name="100"></a>
 ####  · L502，Convergence failure :hourglass_flowing_sand:
 
-**· Example:**
+**➤ Example:**
 
 ```
  Cycle 128  Pass 1  IDiag  1:
@@ -174,11 +174,11 @@ On the windows version of the Gaussian, the output might not update when the err
  File lengths (MBytes):  RWF=   3744 Int=      0 D2E=      0 Chk=    176 Scr=     32
 ```
 
-**· Explanation**
+**➤ Explanation**
 
 This is one of the most common problems in daily operations. The SCF (self-consistent field) iteration is not converged to below the threshold you designated (scf=conv=XX, default 1D-8) within the maximum number of cycles (scf=maxcyc=XX, default 128 cycles) you designated.
 
-**· Identify the problem**
+**➤ Identify the problem**
 
 Before finding solutions, you need to identify specifically how is the convergence going. To do this, you need to replace the `#` to `#p` in your route card to show details of SCF iteration (I suggest always doing this, except for special jobs like ONIOM with a large molecule). You can plot the `E = -XXX.XXXXX` in each cycle, zoom in to the graph so that the changes in the later cycles are clearly visible (referred to as "the curve" later). From the curve, you may find a few scenarios, and you should deal with each one of them separately:
 
@@ -231,7 +231,7 @@ or can also be oscillating with a fixed period:
     --> Opt Step 62:  SCF Done:  E(RB-P86) =  -4207.17296836     A.U. after  129 cycles
     ```
 
-**· Solution**:hourglass_flowing_sand:
+**➤ Solution**:hourglass_flowing_sand:
 
 First of all, there is almost no keyword that can systematically increase the chance of convergence in everyday calculation. I suggest against adding any additional SCF-related keywords to your input file (i.e., keep it as the default).
 
@@ -331,11 +331,11 @@ First of all, there is almost no keyword that can systematically increase the ch
    - `SCF=Fermi`:
      - A black box mixed method uses Fermi broadening, damping and level shifting dynamically. Use this if other method fails.
      
-   - **Make sure you have a qualitatively correct wavefunction**: 
-     - There are situations where the guess you provided to the program is qualitatively incorrect. 
-     - For example, the guess for the system of \[HSO3-\]...\[NO2·\] could have a incorrect fragment charge population and corresponds to \[HSO3·\]...\[NO2-\], causing SCF problems (even if you got a converged wavefunction, the result would be meaningless for your purpose. Similar situation could arise from spin population: the most common problem is a closed shell guess was given for a spin polarized system; more complicated situation could be the spin population for dual-transition metal complexes. 
-     - For these situation, the most effective way to solve this is a fragmented guess, where a two-step gaussian job is called, and first step only generates a guess (where the wavefunction for each fragment is converged, then put together without further optimization). 
-     - The following input file is for the calculation of \[HSO3-\]...\[NO2·\]. In the second step, `guess=read` cause gaussian to read the wavefunction from the chk file generated above; `guess=always` let gaussian read the guess.chk at every optimization step, this can sometimes prevent the drift-away from the wavefunction you want during optimization. `pop=always` asks gaussian to calculate Mulliken population for every step of the optimization, so that you can check that the wavefunction is always correct.
+ - **Make sure you have a qualitatively correct wavefunction**: 
+   - There are situations where the guess you provided to the program is qualitatively incorrect. 
+   - For example, the guess for the system of \[HSO3-\]...\[NO2·\] could have a incorrect fragment charge population and corresponds to \[HSO3·\]...\[NO2-\], causing SCF problems (even if you got a converged wavefunction, the result would be meaningless for your purpose. Similar situation could arise from spin population: the most common problem is a closed shell guess was given for a spin polarized system; more complicated situation could be the spin population for dual-transition metal complexes. 
+   - For these situation, the most effective way to solve this is a fragmented guess, where a two-step gaussian job is called, and first step only generates a guess (where the wavefunction for each fragment is converged, then put together without further optimization). 
+   - The following input file is for the calculation of \[HSO3-\]...\[NO2·\]. In the second step, `guess=read` cause gaussian to read the wavefunction from the chk file generated above; `guess=always` let gaussian read the guess.chk at every optimization step, this can sometimes prevent the drift-away from the wavefunction you want during optimization. `pop=always` asks gaussian to calculate Mulliken population for every step of the optimization, so that you can check that the wavefunction is always correct.
      
         ```
         %rwf=/path/to/your/temp/temp.rwf
@@ -376,11 +376,11 @@ First of all, there is almost no keyword that can systematically increase the ch
 
         ```
 
-     - Be aware there are more complicated situations, but it is out of scope of this document.
+   - Be aware there are more complicated situations, but it is out of scope of this document.
 
-   - **Use a converged wavefunction as initial guess**:
-     - A converged wavefunction (if selected wisely) could be a much better guess than the initial guess generated by Harris or other guess method, avoding flucturation at initial stage. Possible choice includes:
-     - If you are doing calculation with a large basis set (especially when there are diffuse functions), use converged function at smaller basis set (or without diffuse functions). You can use a looser SCF convergent threshold in the initial guess step. The following file generates a guess with def2-SV(P) basis set, and use it as initial guess for calculation at ma-TZVP level:
+ - **Use a converged wavefunction as initial guess**:
+   - A converged wavefunction (if selected wisely) could be a much better guess than the initial guess generated by Harris or other guess method, avoding flucturation at initial stage. Possible choice includes:
+   - If you are doing calculation with a large basis set (especially when there are diffuse functions), use converged function at smaller basis set (or without diffuse functions). You can use a looser SCF convergent threshold in the initial guess step. The following file generates a guess with def2-SV(P) basis set, and use it as initial guess for calculation at ma-TZVP level:
         ```
         %rwf=/path/to/your/temp/temp.rwf
         %nosave
@@ -407,15 +407,15 @@ First of all, there is almost no keyword that can systematically increase the ch
         @/path/to/your/ma-TZVP.basis
         ```
 
-     - If you are doing calculation with an anion (-1 1), use the cation (2-electron less, 1 1) as the guess. This could work with neutual molecules, where you use the (2 1) state as the guess, but that has a lesser effect than the anion to cation case.
-     - If you are doing calculation with an radical (0 2), use the closed shell cation as the guess (1 1).
-     - If you know a similar but different geometry that can results in a converged SCF, use that as guess. This usually works when a bond is being broken, while a longer or shorter bond distance could work. Also be aware of potential polarized singlet problem. And sometimes just randomly change the geometry also works (if that is the case, be vigilant whether there are problem about [solvent cavity](#2100))
-     - If you are running a calculation with solvation, use vacuum SCF wavefunction as a guess.
-     - If you are running a calculation with pure functional, or a hybrid functional with low Hartree-Fock percentage, try to converge a wavefunction with Hartree-Fock, and use it as the guess. HF is easier to converge as it has a larger (overestimate) gap.
-     - If you are calculating an ROHF (ROKS) state, use UHF (UKS) wavefunction as guess.
+   - If you are doing calculation with an anion (-1 1), use the cation (2-electron less, 1 1) as the guess. This could work with neutual molecules, where you use the (2 1) state as the guess, but that has a lesser effect than the anion to cation case.
+   - If you are doing calculation with an radical (0 2), use the closed shell cation as the guess (1 1).
+   - If you know a similar but different geometry that can results in a converged SCF, use that as guess. This usually works when a bond is being broken, while a longer or shorter bond distance could work. Also be aware of potential polarized singlet problem. And sometimes just randomly change the geometry also works (if that is the case, be vigilant whether there are problem about [solvent cavity](#2100))
+   - If you are running a calculation with solvation, use vacuum SCF wavefunction as a guess.
+   - If you are running a calculation with pure functional, or a hybrid functional with low Hartree-Fock percentage, try to converge a wavefunction with Hartree-Fock, and use it as the guess. HF is easier to converge as it has a larger (overestimate) gap.
+   - If you are calculating an ROHF (ROKS) state, use UHF (UKS) wavefunction as guess.
 
-   - **Use a different guess method**: 
-     - Use keywords `guess=huckel` or `guess=INDO`. However I found this to be rarely useful.
+ - **Use a different guess method**: 
+   - Use keywords `guess=huckel` or `guess=INDO`. However I found this to be rarely useful.
 
 3. For **\[Fluctuation at later stage\]**:
    - `Int=UltraFine`: 
