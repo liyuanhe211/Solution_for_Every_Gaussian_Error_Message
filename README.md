@@ -240,6 +240,7 @@ First of all, there is almost no keyword that can systematically increase the ch
 1. For **\[Monotonous decline\]** ONLY, use `scf=maxcyc=XX` (choose a number larger than 128) to increase the maximum number of cycles. As I mentioned before, this is a rare situation, and this keyword is heavily abused on the internet. Use this keyword in any other situations will only caused you unnecessary CPU times. And it is a sign of ignorance if you see someone write this option as his "default option" (i.e. write this to all the input files).
 
 2. For **\[Fluctuation at initial stage\]**, first try one or a combination of several of the keywords below:
+
    - `SCF=NoVarAcc`: In L502 output, you can see this sentence `Initial convergence to 1.0D-05 achieved.  Increase integral accuracy.` (example below), which means before this step, as the SCF is far from convergent, Gaussian will use a lower integration accuracy to save time. However this may cause SCF fluctuation, in that case, disabling it may solve the problem. Adding this keyword will almost nevel cause a convergent SCF to become divergent, but it will likely cause an increase in the computation time. 
         ```
              Coeff:      0.113D+00 0.365D+00 0.534D+00
@@ -282,10 +283,10 @@ First of all, there is almost no keyword that can systematically increase the ch
         ```
 
 <a name="noincfock"></a>
-     - `SCF=NoIncFock`: Incremental Fock matrix build is an accelaration technique where the Fock matrix is computed recursively using the difference density of the last 2 SCF cycles. This could drastically lower the scaling of the Fock matrix build. However, this may cause fluctuation especially when diffuse functions are used. To solve this, use `SCF=NoIncFock` turns off incremental Fock matrix build. This will results in higher cost of each SCF cycle.
+   - `SCF=NoIncFock`: Incremental Fock matrix build is an accelaration technique where the Fock matrix is computed recursively using the difference density of the last 2 SCF cycles. This could drastically lower the scaling of the Fock matrix build. However, this may cause fluctuation especially when diffuse functions are used. To solve this, use `SCF=NoIncFock` turns off incremental Fock matrix build. This will results in higher cost of each SCF cycle.
 
 <a name="iop537"></a>
-     - `IOp(5/37=N)`: By default, Gaussian will rebuild the Fock matrix in full for every 20 cycles of SCF iteration: `IOp(5/37)=20` by default. This is shown as `Fock matrices will be formed incrementally for  20 cycles.` and `Restarting incremental Fock formation.` in the Gaussian output (example of output below). You can select a N<20, and involke the IOp(5/37=N) option to form the fock matrix every N SCF cycles. The relashionship between `SCF=NoIncFock` and `IOp(5/37=N)` are similar to `opt=CalcAll` and `opt=Recalc=N`.
+   - `IOp(5/37=N)`: By default, Gaussian will rebuild the Fock matrix in full for every 20 cycles of SCF iteration: `IOp(5/37)=20` by default. This is shown as `Fock matrices will be formed incrementally for  20 cycles.` and `Restarting incremental Fock formation.` in the Gaussian output (example of output below). You can select a N<20, and involke the IOp(5/37=N) option to form the fock matrix every N SCF cycles. The relashionship between `SCF=NoIncFock` and `IOp(5/37=N)` are similar to `opt=CalcAll` and `opt=Recalc=N`.
 
         ```
          Requested convergence on             energy=1.00D-06.
@@ -325,10 +326,10 @@ First of all, there is almost no keyword that can systematically increase the ch
          DIIS: error= 8.43D-03 at cycle  41 NSaved=  17.
          NSaved=17 IEnMin=11 EnMin= -5976.91129255226     IErMin=10 ErrMin= 6.51D-03
          ```
-     - `SCF=vshift=N`:
-       - Use level shift to virtually increase the HOMO-LUMO gap. `SCF=vshift=N` shifts orbital energies by N*0.001 hartree. You can usually use a value of 200~500. This does NOT affect the final converged results. It's most effective to system with small gaps, like (multi-core) transition metal complexes. Use this if other method fails.
-     - `SCF=Fermi`:
-       - A black box mixed method uses Fermi broadening, damping and level shifting dynamically. Use this if other method fails.
+   - `SCF=vshift=N`:
+     - Use level shift to virtually increase the HOMO-LUMO gap. `SCF=vshift=N` shifts orbital energies by N*0.001 hartree. You can usually use a value of 200~500. This does NOT affect the final converged results. It's most effective to system with small gaps, like (multi-core) transition metal complexes. Use this if other method fails.
+   - `SCF=Fermi`:
+     - A black box mixed method uses Fermi broadening, damping and level shifting dynamically. Use this if other method fails.
      
    - **Make sure you have a qualitatively correct wavefunction**: 
      - There are situations where the guess you provided to the program is qualitatively incorrect. 
