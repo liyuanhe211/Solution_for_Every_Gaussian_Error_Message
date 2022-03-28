@@ -135,7 +135,7 @@ On the windows version of the Gaussian, the output might not update when the err
 #
 ### SCF Convergence
 <a name="100"></a>
-####  · L502，Convergence failure :hourglass_flowing_sand:
+####  · L502，Convergence failure
 
 **➤ Example:**
 
@@ -231,7 +231,7 @@ or can also be oscillating with a fixed period:
     --> Opt Step 62:  SCF Done:  E(RB-P86) =  -4207.17296836     A.U. after  129 cycles
     ```
 
-**➤ Solution**:hourglass_flowing_sand:
+**➤ Solution**
 
 First of all, there is almost no keyword that can systematically increase the chance of convergence in everyday calculation. I suggest against adding any additional SCF-related keywords to your input file (i.e., keep it as the default).
 
