@@ -1,9 +1,11 @@
 # Solutions for Gaussian Error Messages (translation in progress :hourglass_flowing_sand:)
-This is an article containing reliable explanations and ways to solve the error messages for almost all common Gaussian quantum chemistry programs. This is a per request English translation for [a long blog in Chinese](http://bbs.keinsci.com/thread-4829-1-1.html) I wrote a few years back. I wrote the original Chinese post as there is almost no reliable list of how to solve the errors. Similar online resources online are neither comprehensive nor accurate.
+This is an article containing reliable explanations and solutions for almost all error messages in the Gaussian quantum chemistry programs. This is a per request English translation for [a long blog in Chinese](http://bbs.keinsci.com/thread-4829-1-1.html) I wrote a few years back. 
 
-This blog is for people with basic knowledge of how Gaussian works, what's the basic structure of Gaussian files, and a basic understanding of quantum chemistry.
+I wrote the original Chinese post as there is almost no reliable list of how to solve the errors. Similar online resources online are neither comprehensive nor accurate.
 
-Using (including part of) this blog in a commercial setting (or for any profitable action) is prohibited. Otherwise, feel free to use this material as long as you mention the source.
+This blog is for people with basic knowledge of how Gaussian works, what's the basic structure of Gaussian files, and a basic understanding of quantum chemistry. So do not ask questions like "what do you mean by add XXXX keyword?".
+
+Using (including part of) this blog in a commercial setting (or for any profitable action) is prohibited. Otherwise, feel free to use this material as long as you mention the source before the usage, and link to this article.
 
 I'm not related to Gaussian Inc. in any way.
 
