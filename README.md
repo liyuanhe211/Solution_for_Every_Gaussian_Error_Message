@@ -283,10 +283,10 @@ First of all, there is almost no keyword that can systematically increase the ch
         ```
 
 
-   - <a name="noincfock"></a> `SCF=NoIncFock`: Incremental Fock matrix build is an accelaration technique where the Fock matrix is computed recursively using the difference density of the last 2 SCF cycles. This could drastically lower the scaling of the Fock matrix build. However, this may cause fluctuation especially when diffuse functions are used. To solve this, use `SCF=NoIncFock` turns off incremental Fock matrix build. This will results in higher cost of each SCF cycle.
+   - <a name="noincfock"></a>`SCF=NoIncFock`: Incremental Fock matrix build is an accelaration technique where the Fock matrix is computed recursively using the difference density of the last 2 SCF cycles. This could drastically lower the scaling of the Fock matrix build. However, this may cause fluctuation especially when diffuse functions are used. To solve this, use `SCF=NoIncFock` turns off incremental Fock matrix build. This will results in higher cost of each SCF cycle.
 
-<a name="iop537"></a>
-   - `IOp(5/37=N)`: By default, Gaussian will rebuild the Fock matrix in full for every 20 cycles of SCF iteration: `IOp(5/37)=20` by default. This is shown as `Fock matrices will be formed incrementally for  20 cycles.` and `Restarting incremental Fock formation.` in the Gaussian output (example of output below). You can select a N<20, and involke the IOp(5/37=N) option to form the fock matrix every N SCF cycles. The relashionship between `SCF=NoIncFock` and `IOp(5/37=N)` are similar to `opt=CalcAll` and `opt=Recalc=N`.
+
+   - <a name="iop537"></a>`IOp(5/37=N)`: By default, Gaussian will rebuild the Fock matrix in full for every 20 cycles of SCF iteration: `IOp(5/37)=20` by default. This is shown as `Fock matrices will be formed incrementally for  20 cycles.` and `Restarting incremental Fock formation.` in the Gaussian output (example of output below). You can select a N<20, and involke the IOp(5/37=N) option to form the fock matrix every N SCF cycles. The relashionship between `SCF=NoIncFock` and `IOp(5/37=N)` are similar to `opt=CalcAll` and `opt=Recalc=N`.
 
         ```
          Requested convergence on             energy=1.00D-06.
