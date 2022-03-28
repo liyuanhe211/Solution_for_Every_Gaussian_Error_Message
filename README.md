@@ -440,10 +440,23 @@ First of all, there is almost no keyword that can systematically increase the ch
      - This IOp suppress the checking for SCF convergence. The program will carryout the following reaction no matter what's the situation of the SCF convergence. This should almost NEVER be used. The result is likely to be qualitatively wrong. If anyone suggests this as a solution to a L502 error, or use this option in his "default input file template", he should not be trusted to give any advice for Gaussian, and all of this computational result should be checked before interpretation. 
      - Some people say you can use it in a geometry optimization, as if one of the steps is not converged, the next step could, and finally leads to a reasonable reault. However this is nonsence. If the SCF is not converged, the gradient has a much larger error than the energy, which means the following optimization step is bascially a ramdom nonsence move. If this solves the convergence problem, you may as well do this by yourself. Also, one may well be forgot to check EVERY optimization mission that the SCF is indeed converged in the last step, and report a meaningless result. 
    
-   
 #
 <a name="200"></a>
 ####  :arrow_forward: L508，Convergence failure :hourglass_flowing_sand:
+
+```
+Density matrix breaks symmetry, PCut= 6.91D-03
+Density matrix has no symmetry -- integrals replicated.
+Iteration  80 EE= -1377.03506721338     Delta-E=       -0.001137227868 Grad=4.268D-02
+Gradient too large for Newton-Raphson -- use scaled steepest descent instead.
+Convergence failure.
+Error termination via Lnk1e in C:\G09W\l508.exe at Mon Jun 26 19:36:04 2017.
+```
+
+成因：用 QC 方法时SCF不收敛
+
+解决方法：去掉SCF=qc、SCF=xqc、SCF=yqc 关键词进行计算。如果继而出现 L502, Convergence Failure问题，参照上文解决，只不过绕开涉及 scf=qc 的方案即可。
+
 #
 ### Post-HF Convergence
 <a name="2200"></a>
@@ -452,6 +465,40 @@ First of all, there is almost no keyword that can systematically increase the ch
 ### Geometry Optimization Convergence
 <a name="400"></a>
 ####  :arrow_forward: L9999，Optimization stopped. :hourglass_flowing_sand:
+```
+Error termination via Lnk1e in l9999.exe
+```
+此报错需查看输出文件中的额外信息，自结尾处向上检索“Optimization stop”可见如下几种情况
+```
+Optimization stopped.
+-- Wrong number of Negative eigenvalues: Desired= 1 Actual= 4
+-- Flag reset to prevent archiving.
+```
+成因：Gaussian会在过渡态优化时自动检查虚频的数量，若不为1即终止。这一检查没有必要
+解决：将NoEigenTest关键词加入到opt的选项中，如 opt=(TS, CalcFC, NoEigenTest)
+```
+Optimization stopped.
+-- Number of steps exceeded, NStep= 100
+-- Flag reset to prevent archiving.
+```
+成因：几何优化未能在指定步数内收敛
+解决：打开GaussView，File-Open，按照如下设置：
+![image](https://user-images.githubusercontent.com/18537705/160451260-c7b66c9d-25d0-490b-9273-b26068c3fca8.png)
+
+然后点击Result-Optimization，可以看到优化时的能量变化曲线。观察优化曲线应纵向放大，方法为用鼠标反复选择纵轴方向仅包含最末几个点、但横轴方向包含所有点的“宽而矮”的矩形范围，直到能看清最末几个点的变化情况为止。根据图形判断是否震荡。如下图，需纵向放大至右边才能看清确实震荡了。（注意图中偶尔有突然的、无“周期性的”某1~2个点的spike是正常现象，不是震荡，下方小幅度但有“周期性”的才是震荡。）
+
+左侧看不出是否震荡。需纵向放大至右侧才能看出。
+![image](https://user-images.githubusercontent.com/18537705/160451281-1f2410ea-64d1-4b24-97ea-af03b40832dd.png)
+![image](https://user-images.githubusercontent.com/18537705/160451287-533da245-72eb-4778-acbd-ef77db56f3ab.png)
+
+如果没有震荡：opt=maxcycle=当前步数的2~3倍。可以读取当前最末/最优的一个构象做为新的初猜。注意检查构象、轨迹是否合理，如果结构已经不合理了，则应适当调整初猜后再做（尤其是找过渡态的时候）。
+
+如果震荡了，看：http://sobereva.com/164。
+
+文中的众多解决方法中，我个人倾向于找到能量较低、4个收敛标准离收敛限较近，且结构合理的某点为新的初猜，并首先尝试在 opt 选项中加上(MaxStep=5, NoTrustUpdate, GDIIS) 选项；如果有计算频率的资源，可再加上opt=calcfc选项。特别仅对于对称性较高的结构，如T、C3 等群的复杂分子，若反复调整关键词后仍然震荡，可以尝试构建或破坏具有对称性的初猜结构，分别结合opt=Cartesian 优化，如 opt=(MaxStep=5,NoTrustUpdate,Cartesian), 有时有效果。
+注意上一段仅是我个人首先尝试的建议，不要仅仅试了这一个不行就又把问题拿出来问。http://sobereva.com/164 有的是其他办法。
+
+
 #
 <a name="500"></a>
 ####  :arrow_forward: L123，Max corrector steps exceded :hourglass_flowing_sand:
@@ -545,6 +592,17 @@ First of all, there is almost no keyword that can systematically increase the ch
 ### Others
 <a name="300"></a>
 ####  :arrow_forward: L502/L1002，Inaccurate quadrature in CalDSu. :hourglass_flowing_sand:
+
+    Inaccurate quadrature in CalDSu.
+    Error termination via Lnk1e in l502.exe
+    Inaccurate quadrature in CalDSu.
+    Error termination via Lnk1e in l1002.exe
+首先应检查：
+（1）基组/赝势是否合理，是否有例如赝势基组没写赝势之类的低级错误
+（2）结构（或是轨迹）是否合理
+
+如果均没有问题，则按下面的PPT解决：
+  <p align="center"><img src="https://user-images.githubusercontent.com/18537705/160450976-6bc25983-8dbb-4180-a8a5-7a2a2d70cb64.png" width="50%" height="50%" align="center"></img></p>
 #
 <a name="1800"></a>
 ####  :arrow_forward: L114，ERROR IN INITNF. NUMBER OF VARIABLES (  0) INCORRECT (SHOULD BE BETWEEN 1 AND 50) :hourglass_flowing_sand:
