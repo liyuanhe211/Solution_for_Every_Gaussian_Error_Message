@@ -194,7 +194,7 @@ or can also be oscillating with a fixed period:
 
 2. **\[Fluctuation at later stage\]**: same with above, just the convergence is closer to the threshold, like 10^-5 hartree or below
 
-3. **\[Monotonous decline\]**: The curve is monotonously declining (it's ok to have a few points as exceptions to the monotonous trend), but doesn't converge at maxcyc. This situation is exceedingly rare. I believe I've only encountered this less than 5 times in all my calculations, and interestingly, several of them involves lanthanide atoms. 
+3. **\[Monotonous decline\]**: The curve is monotonously declining (it's ok to have a few points as exceptions to the monotonous trend), but doesn't converge at maxcyc. This situation is exceedingly rare. I believe I've only encountered this less than 5 times in all my calculations, and interestingly, most of them involves lanthanide atoms. 
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134804908-2b72744f-0fc7-42d6-9bed-22692adbbf54.png" width="30%" height="30%" align="center"></img></p>
 
@@ -325,7 +325,11 @@ First of all, there is almost no keyword that can systematically increase the ch
          DIIS: error= 8.43D-03 at cycle  41 NSaved=  17.
          NSaved=17 IEnMin=11 EnMin= -5976.91129255226     IErMin=10 ErrMin= 6.51D-03
          ```
- 
+   - `SCF=vshift=N`:
+     - Use level shift to virtually increase the HOMO-LUMO gap. `SCF=vshift=N` shifts orbital energies by N*0.001 hartree. You can usually use a value of 200~500. This does NOT affect the final converged results. It's most effective to system with small gaps, like (multi-core) transition metal complexes. Use this if other method fails.
+   - `SCF=Fermi`:
+     - A black box mixed method uses Fermi broadening, damping and level shifting dynamically. Use this if other method fails.
+     
    - **Make sure you have a qualitatively correct wavefunction**: 
      - There are situations where the guess you provided to the program is qualitatively incorrect. 
      - For example, the guess for the system of \[HSO3-\]...\[NO2·\] could have a incorrect fragment charge population and corresponds to \[HSO3·\]...\[NO2-\], causing SCF problems (even if you got a converged wavefunction, the result would be meaningless for your purpose. Similar situation could arise from spin population: the most common problem is a closed shell guess was given for a spin polarized system; more complicated situation could be the spin population for dual-transition metal complexes. 
@@ -405,9 +409,12 @@ First of all, there is almost no keyword that can systematically increase the ch
      - If you are doing calculation with an anion (-1 1), use the cation (2-electron less, 1 1) as the guess. This could work with neutual molecules, where you use the (2 1) state as the guess, but that has a lesser effect than the anion to cation case.
      - If you are doing calculation with an radical (0 2), use the closed shell cation as the guess (1 1).
      - If you know a similar but different geometry that can results in a converged SCF, use that as guess. This usually works when a bond is being broken, while a longer or shorter bond distance could work. Also be aware of potential polarized singlet problem. And sometimes just randomly change the geometry also works (if that is the case, be vigilant whether there are problem about [solvent cavity](#2100))
-     - 
+     - If you are running a calculation with solvation, use vacuum SCF wavefunction as a guess.
+     - If you are running a calculation with pure functional, or a hybrid functional with low Hartree-Fock percentage, try to converge a wavefunction with Hartree-Fock, and use it as the guess. HF is easier to converge as it has a larger (overestimate) gap.
+     - If you are calculating an ROHF (ROKS) state, use UHF (UKS) wavefunction as guess.
 
    - **Use a different guess method**: 
+     - Use keywords `guess=huckel` or `guess=INDO`. However I found this to be rarely useful.
 
 3. For **\[Fluctuation at later stage\]**:
    - `Int=UltraFine`: 
@@ -417,11 +424,19 @@ First of all, there is almost no keyword that can systematically increase the ch
      - 【About SuperFine】There is a higher grid `Int=SuperFine`, however Int=UltraFine is usually good enough, and it is unlikely that SuperFine grid will solve SCF divergence, unless you are requiring some uncommon SCF threshold. 
    
    - [`SCF=NoIncFock`](#noincfock)
+     - [See above](#noincfock)
    
    - [`IOp(5/37=N)`](#iop537)
-4. 
-5. Danger zone
+     - [See above](#iop537)
+4. Danger zone
+   - `SCF=QC`, `SCF=XQC`, `SCF=YQC`: 
+     - Asks the use of quadratically convergent method (for `SCF=XQC`, the QC is invoked only if ordinary SCF failed after (by default) 32 steps). SCF=QC has a significant better chance at convergence. However, it's (1) far more expensive, (2) more likely to result in a local minimum or unconverged wavefunction (do sanity check with wavefunctional analysis, or at least do a `stable` calculation, especially with ONLY SCF=QC could converged but not any other method).
+   - `SCF=conver=N`:
+     - Use coarser criteria for SCF convergence. Default is 8, so choose a number smaller than 8. The specific meaning is to converge the RMS of the density matrix to below 10<sup>-N</sup> and converge the maximum change of the density matrix and the change of electronic energy to below 10<sup>-N+2</sup>. For single point calculations, you can set it to `scf=conver=6` with reasonable result. However, do not use this in optimization or frequency missions. As if you converge the SCF wavefunction to 10<sup>-6</sup>, the gradient would be only be converged to at about 10<sup>-3</sup> ~ 10<sup>-4</sup>. The default optimization convergence criteria for gradient is on the order of 10<sup>-4</sup>, which means you may never be able to converge a geometry optimization.
    - `IOp(5/13=1)`: 
+     - This IOp suppress the checking for SCF convergence. The program will carryout the following reaction no matter what's the situation of the SCF convergence. This should almost NEVER be used. The result is likely to be qualitatively wrong. If anyone suggests this as a solution to a L502 error, or use this option in his "default input file template", he should not be trusted to give any advice for Gaussian, and all of this computational result should be checked before interpretation. 
+     - Some people say you can use it in a geometry optimization, as if one of the steps is not converged, the next step could, and finally leads to a reasonable reault. However this is nonsence. If the SCF is not converged, the gradient has a much larger error than the energy, which means the following optimization step is bascially a ramdom nonsence move. If this solves the convergence problem, you may as well do this by yourself. Also, one may well be forgot to check EVERY optimization mission that the SCF is indeed converged in the last step, and report a meaningless result. 
+   
    
 #
 <a name="200"></a>
