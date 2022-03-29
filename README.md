@@ -184,7 +184,7 @@ This is one of the most common problems in daily operations. The SCF (self-consi
 
 Before finding solutions, you need to identify specifically how is the convergence going. To do this, you need to replace the `#` to `#p` in your route card to show details of SCF iteration (I suggest always doing this, except for special jobs like ONIOM with a large molecule). You can plot the `E = -XXX.XXXXX` in each cycle, zoom in to the graph so that the changes in the later cycles are clearly visible (referred to as "the curve" later). From the curve, you may find a few scenarios, and you should deal with each one of them separately:
 
-1. **\[Fluctuation at initial stage\]**: The curve is fluctuating, and the convergence (given by `NFock=128  Conv=XXXXD-XX` in the output) is far from the threshold, usually larger than 10^-3 hartree). The fluctuation can be somewhat chaotic:
+1. **\[Fluctuation at initial stage\]**: The curve is fluctuating, and the convergence (given by `NFock=128  Conv=XXXXD-XX` in the output) is far from the threshold (usually larger than 10^-3 hartree). The fluctuation can be somewhat chaotic:
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134804057-5b071d62-cbfa-42f3-9876-b09b1b6b28d2.png" width="30%" height="30%"></img></p>
 
@@ -200,7 +200,7 @@ or can also be oscillating with a fixed period:
 
 <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134804908-2b72744f-0fc7-42d6-9bed-22692adbbf54.png" width="30%" height="30%" align="center"></img></p>
 
-4. **\[SCF (curve shape irrelevant) with drastically different electronic energy for similar structures\]** (for example, during optimization). For example, the image and output below represent a job that ends with an SCF convergent failure. The last step has an SCF energy several hundred hartree higher than previous ones. Reviewing the optimization process (Image below, right), you can see the optimization kinda goes haywire (the forces and displacements don't look right) at around step 39. which is reflexed in the jump of his SCF energy (despite it has converged). Steps 50 and 56 (highlighted with arrow) also have energy tens of hartrees above the normal ones. This usually indicated a deeper problem than just SCF convergence problem and could be raised from dividing a very small number and results in a very large numerical error. The small number could be caused by the linear dependency of the basis sets or solvation cavity problems (see the section [L502/L508，Inv3 failed in PCMMkU](#2100)).
+4. **\[SCF (curve shape irrelevant) with drastically different electronic energy for similar structures\]** (for example, during optimization). For example, the image and output below represent a job that ends with an SCF convergent failure. The last step has an SCF energy several hundred hartree higher than previous ones. Reviewing the optimization process (Image below, right), you can see the optimization kinda goes haywire (the forces and displacements don't look right) at around step 39. This is reflexed in the jump of his SCF energy (despite it has converged). Steps 50 and 56 (highlighted with arrow) also have energy tens of hartrees above the normal ones. This usually indicated a deeper problem than just SCF convergence problem and could be raised from dividing a very small number and results in a very large numerical error. The small number could be caused by the linear dependency of the basis sets or solvation cavity issues (see the section [L502/L508，Inv3 failed in PCMMkU](#2100)).
 
     <p align="center"><img src="https://user-images.githubusercontent.com/18537705/134805076-4bfd9d2b-b85c-41a8-b43f-641ca2e593e7.png" width="50%" height="50%" align="center"></img></p>
     
@@ -235,15 +235,15 @@ or can also be oscillating with a fixed period:
 
 **➤ Solution**
 
-First of all, there is almost no keyword that can systematically increase the chance of convergence in everyday calculation. I suggest against adding any additional SCF-related keywords to your input file (i.e., keep it as the default).
+First, there is almost no keyword that can systematically increase the chance of convergence in everyday calculation. I suggest against adding any additional SCF-related keywords to your input file (i.e., keep it as the default).
 
 (Many of the following content in this section referenced [this Chinese post](http://sobereva.com/61) by Sobereva.)
 
-1. For **\[Monotonous decline\]** ONLY, use `scf=maxcyc=XX` (choose a number larger than 128) to increase the maximum number of cycles. As I mentioned before, this is a rare situation, and this keyword is heavily abused on the internet. Use this keyword in any other situations will only caused you unnecessary CPU times. And it is a sign of ignorance if you see someone write this option as his "default option" (i.e. write this to all the input files).
+1. For **\[Monotonous decline\]** ONLY, use `scf=maxcyc=XX` (choose a number larger than 128) to increase the maximum number of cycles. As I mentioned before, this is a rare situation, and this keyword is heavily abused on the internet. Use this keyword in any other situations will only cause you unnecessary CPU times. And it is a sign of ignorance if you see someone write this option as his "default option" (i.e. write this to all the input files).
 
-2. For **\[Fluctuation at initial stage\]**, first try one or a combination of several of the keywords below:
+3. For **\[Fluctuation at initial stage\]**, first try one or a combination of several of the keywords below:
 
-   - `SCF=NoVarAcc`: In L502 output, you can see this sentence `Initial convergence to 1.0D-05 achieved.  Increase integral accuracy.` (example below), which means before this step, as the SCF is far from convergent, Gaussian will use a lower integration accuracy to save time. However this may cause SCF fluctuation, in that case, disabling it may solve the problem. Adding this keyword will almost nevel cause a convergent SCF to become divergent, but it will likely cause an increase in the computation time. 
+   - `SCF=NoVarAcc`: In L502 output, you can see this sentence `Initial convergence to 1.0D-05 achieved.  Increase integral accuracy.` (example below), which means before this step, as the SCF is far from convergent, Gaussian will use a lower integration accuracy to save time. However, this may cause SCF fluctuation, in that case, disabling it may solve the problem. Adding this keyword will almost never cause a convergent SCF to become divergent, but it will likely cause an increase in the computation time. 
         ```
              Coeff:      0.113D+00 0.365D+00 0.534D+00
              Gap=     0.125 Goal=   None    Shift=    0.000
@@ -285,10 +285,10 @@ First of all, there is almost no keyword that can systematically increase the ch
         ```
 
 
-   - <a name="noincfock"></a>`SCF=NoIncFock`: Incremental Fock matrix build is an accelaration technique where the Fock matrix is computed recursively using the difference density of the last 2 SCF cycles. This could drastically lower the scaling of the Fock matrix build. However, this may cause fluctuation especially when diffuse functions are used. To solve this, use `SCF=NoIncFock` turns off incremental Fock matrix build. This will results in higher cost of each SCF cycle.
+   - <a name="noincfock"></a>`SCF=NoIncFock`: Incremental Fock matrix build is an acceleration technique where the Fock matrix is computed recursively using the difference density of the last 2 SCF cycles. This could drastically lower the scaling of the Fock matrix build. However, this may cause fluctuation, especially when diffuse functions are used. To solve this, use `SCF=NoIncFock` turns off incremental Fock matrix build. This will result in higher cost of each SCF cycle.
 
 
-   - <a name="iop537"></a>`IOp(5/37=N)`: By default, Gaussian will rebuild the Fock matrix in full for every 20 cycles of SCF iteration: `IOp(5/37)=20` by default. This is shown as `Fock matrices will be formed incrementally for  20 cycles.` and `Restarting incremental Fock formation.` in the Gaussian output (example of output below). You can select a N<20, and involke the IOp(5/37=N) option to form the fock matrix every N SCF cycles. The relashionship between `SCF=NoIncFock` and `IOp(5/37=N)` are similar to `opt=CalcAll` and `opt=Recalc=N`.
+   - <a name="iop537"></a>`IOp(5/37=N)`: By default, Gaussian will rebuild the Fock matrix in full for every 20 cycles of SCF iteration: `IOp(5/37)=20` by default. This is shown as `Fock matrices will be formed incrementally for  20 cycles.` and `Restarting incremental Fock formation.` in the Gaussian output (example of output below). You can select an N<20, and involve the IOp(5/37=N) option to form the Fock matrix every N SCF cycles. The relationship between `SCF=NoIncFock` and `IOp(5/37=N)` are similar to `opt=CalcAll` and `opt=Recalc=N`.
 
         ```
          Requested convergence on             energy=1.00D-06.
@@ -329,15 +329,15 @@ First of all, there is almost no keyword that can systematically increase the ch
          NSaved=17 IEnMin=11 EnMin= -5976.91129255226     IErMin=10 ErrMin= 6.51D-03
          ```
    - `SCF=vshift=N`:
-     - Use level shift to virtually increase the HOMO-LUMO gap. `SCF=vshift=N` shifts orbital energies by N*0.001 hartree. You can usually use a value of 200~500. This does NOT affect the final converged results. It's most effective to system with small gaps, like (multi-core) transition metal complexes. Use this if other method fails.
+     - Use level shift to virtually increase the HOMO-LUMO gap. `SCF=vshift=N` shifts orbital energies by N*0.001 hartree. You can usually use a value of 200~500. This does NOT affect the final converged results. It's most effective to systems with small gaps, like (multicore) transition metal complexes. Use this if other method fails.
    - `SCF=Fermi`:
      - A black box mixed method uses Fermi broadening, damping and level shifting dynamically. Use this if other method fails.
      
  - **Make sure you have a qualitatively correct wavefunction**: 
    - There are situations where the guess you provided to the program is qualitatively incorrect. 
-   - For example, the guess for the system of \[HSO3-\]...\[NO2·\] could have a incorrect fragment charge population and corresponds to \[HSO3·\]...\[NO2-\], causing SCF problems (even if you got a converged wavefunction, the result would be meaningless for your purpose. Similar situation could arise from spin population: the most common problem is a closed shell guess was given for a spin polarized system; more complicated situation could be the spin population for dual-transition metal complexes. 
-   - For these situation, the most effective way to solve this is a fragmented guess, where a two-step gaussian job is called, and first step only generates a guess (where the wavefunction for each fragment is converged, then put together without further optimization). 
-   - The following input file is for the calculation of \[HSO3-\]...\[NO2·\]. In the second step, `guess=read` cause gaussian to read the wavefunction from the chk file generated above; `guess=always` let gaussian read the guess.chk at every optimization step, this can sometimes prevent the drift-away from the wavefunction you want during optimization. `pop=always` asks gaussian to calculate Mulliken population for every step of the optimization, so that you can check that the wavefunction is always correct.
+   - For example, the guess for the system of \[HSO3-\]...\[NO2·\] could have an incorrect fragment charge population and corresponds to \[HSO3·\]...\[NO2-\], causing SCF problems (even if you got a converged wavefunction, the result would be meaningless for your purpose). Similar situation could arise from spin population: the most common problem is a closed shell guess was given for a spin polarized system; more complicated situation could be the spin population for dual-transition metal complexes. 
+   - For these situations, the most effective way to solve this is a fragmented guess, where a two-step Gaussian job is called, and the first step only generates a guess (where the wavefunction for each fragment is converged, then put together without further optimization). 
+   - The following input file is for the calculation of \[HSO3-\]...\[NO2·\]. In the second step, `guess=read` cause Gaussian to read the wavefunction from the chk file generated above; `guess=always` let Gaussian read the guess.chk at every optimization step, this can sometimes prevent the drift-away from the wavefunction you want during optimization. `pop=always` asks Gaussian to calculate Mulliken population for every step of the optimization, so that you can check that the wavefunction is always correct.
      
         ```
         %rwf=/path/to/your/temp/temp.rwf
@@ -379,9 +379,9 @@ First of all, there is almost no keyword that can systematically increase the ch
         ```
 
    - Be aware there are more complicated situations, but it is out of scope of this document.
-
+   
  - **Use a converged wavefunction as initial guess**:
-   - A converged wavefunction (if selected wisely) could be a much better guess than the initial guess generated by Harris or other guess method, avoding flucturation at initial stage. Possible choice includes:
+   - A converged wavefunction (if selected wisely) could be a much better guess than the initial guess generated by Harris or other guess method, avoiding fluctuation at initial stage. Possible choice includes:
    - If you are doing calculation with a large basis set (especially when there are diffuse functions), use converged function at smaller basis set (or without diffuse functions). You can use a looser SCF convergent threshold in the initial guess step. The following file generates a guess with def2-SV(P) basis set, and use it as initial guess for calculation at ma-TZVP level:
         ```
         %rwf=/path/to/your/temp/temp.rwf
@@ -409,21 +409,21 @@ First of all, there is almost no keyword that can systematically increase the ch
         @/path/to/your/ma-TZVP.basis
         ```
 
-   - If you are doing calculation with an anion (-1 1), use the cation (2-electron less, 1 1) as the guess. This could work with neutual molecules, where you use the (2 1) state as the guess, but that has a lesser effect than the anion to cation case.
-   - If you are doing calculation with an radical (0 2), use the closed shell cation as the guess (1 1).
-   - If you know a similar but different geometry that can results in a converged SCF, use that as guess. This usually works when a bond is being broken, while a longer or shorter bond distance could work. Also be aware of potential polarized singlet problem. And sometimes just randomly change the geometry also works (if that is the case, be vigilant whether there are problem about [solvent cavity](#2100))
+   - If you are doing a calculation with an anion (-1 1), use the cation (2-electron less, 1 1) as the guess. This could work with neutral molecules, where you use the (2 1) state as the guess, but that has a lesser effect than the anion to cation case.
+   - If you are doing calculation with a radical (0 2), use the closed shell cation as the guess (1 1).
+   - If you know a similar but different geometry that can results in a converged SCF, use that as a guess. This usually works when a bond is being broken, while a longer or shorter bond distance could work. Also be aware of potential polarized singlet problem. And sometimes just randomly change the geometry also works (if that is the case, be vigilant whether there are problems about [solvent cavity](#2100))
    - If you are running a calculation with solvation, use vacuum SCF wavefunction as a guess.
    - If you are running a calculation with pure functional, or a hybrid functional with low Hartree-Fock percentage, try to converge a wavefunction with Hartree-Fock, and use it as the guess. HF is easier to converge as it has a larger (overestimate) gap.
-   - If you are calculating an ROHF (ROKS) state, use UHF (UKS) wavefunction as guess.
+   - If you are calculating an ROHF (ROKS) state, use UHF (UKS) wavefunction as a guess.
 
  - **Use a different guess method**: 
-   - Use keywords `guess=huckel` or `guess=INDO`. However I found this to be rarely useful.
+   - Use keywords `guess=huckel` or `guess=INDO`. However, I found this to be rarely useful.
 
 3. For **\[Fluctuation at later stage\]**:
    - `Int=UltraFine`: 
-     - 【When it is useful】For methods that use a grid-based numerical integration (DFT only), insufficient grid quality could cause small numerical error that's just larger than the convergent threshold of SCF (and for the same reason, this is not likely to help flucturation at early stage of SCF). The [Minnesota functionals](https://en.wikipedia.org/wiki/Minnesota_functionals) are kinda notorious for their higher requirement for grid quality. Thus this is the prime recommendation if that is the case. I have examples where this keyword help with other functionals, but it's rarer than the Minnesota functionals. 
+     - 【When it is useful】For methods that use a grid-based numerical integration (DFT only), insufficient grid quality could cause small numerical error that's just larger than the convergent threshold of SCF (and for the same reason, this is not likely to help fluctuations at early stage of SCF). The [Minnesota functionals](https://en.wikipedia.org/wiki/Minnesota_functionals) are kinda notorious for their higher requirement for grid quality. Thus, this is the prime recommendation if that is the case. I have examples where this keyword help with other functionals, but it's rarer than the Minnesota functionals. 
      - 【G16】Note that since Gaussian 16, the default option has already become `Int=Ultrafine`. So unless you specifically lowered it to `Int=Fine`, there is no need to write Int=Ultrafine explicitly. 
-     - 【Comparablity】Energies at different integration grid is not comparable. If you raise the integration grid for one structure, you need to re-run all the calculations for which you are getting a difference in energy with that structure. One exception is that you can optimize the structure with Int=UltraFine grid, but do a Int=Find grid single point calculation to get the correct electronic energy, and add the later electronic energy with the thermodynamic correction at Int=UltraFine grid (This is because the intregration grid is not likely to greately affect the PES). You need to clearly state what integration grid you used in the Supporting Information of your publication (for repeatability). 
+     - 【Comparablity】Energies at different integration grid is not comparable. If you raise the integration grid for one structure, you need to re-run all the calculations for which you are getting a difference in energy with that structure. One exception is that you can optimize the structure with Int=UltraFine grid, but do an Int=Find grid single point calculation to get the correct electronic energy, and add the later electronic energy with the thermodynamic correction at Int=UltraFine grid (This is because theintegrationn grid is not likely to greatly affect the PES). You need to clearly state what integration grid you used in the Supporting Information of your publication (for repeatability). 
      - 【About SuperFine】There is a higher grid `Int=SuperFine`, however Int=UltraFine is usually good enough, and it is unlikely that SuperFine grid will solve SCF divergence, unless you are requiring some uncommon SCF threshold. 
    
    - [`SCF=NoIncFock`](#noincfock)
@@ -433,12 +433,12 @@ First of all, there is almost no keyword that can systematically increase the ch
      - [See above](#iop537)
 4. Danger zone
    - `SCF=QC`, `SCF=XQC`, `SCF=YQC`: 
-     - Asks the use of quadratically convergent method (for `SCF=XQC`, the QC is invoked only if ordinary SCF failed after (by default) 32 steps). SCF=QC has a significant better chance at convergence. However, it's (1) far more expensive, (2) more likely to result in a local minimum or unconverged wavefunction (do sanity check with wavefunctional analysis, or at least do a `stable` calculation, especially with ONLY SCF=QC could converged but not any other method).
+     - Asks the use of quadratically convergent method (for `SCF=XQC`, the QC is invoked only if ordinary SCF failed after (by default) 32 steps). SCF=QC has a significant better chance of convergence. However, it's (1) far more expensive, (2) more likely to result in a local minimum or unconverged wavefunction (do sanity check with wavefunctional analysis, or at least do a `stable` calculation, especially with ONLY SCF=QC could converge but not any other method).
    - `SCF=conver=N`:
      - Use coarser criteria for SCF convergence. Default is 8, so choose a number smaller than 8. The specific meaning is to converge the RMS of the density matrix to below 10<sup>-N</sup> and converge the maximum change of the density matrix and the change of electronic energy to below 10<sup>-N+2</sup>. For single point calculations, you can set it to `scf=conver=6` with reasonable result. However, do not use this in optimization or frequency missions. As if you converge the SCF wavefunction to 10<sup>-6</sup>, the gradient would be only be converged to at about 10<sup>-3</sup> ~ 10<sup>-4</sup>. The default optimization convergence criteria for gradient is on the order of 10<sup>-4</sup>, which means you may never be able to converge a geometry optimization.
    - `IOp(5/13=1)`: 
-     - This IOp suppress the checking for SCF convergence. The program will carryout the following reaction no matter what's the situation of the SCF convergence. This should almost NEVER be used. The result is likely to be qualitatively wrong. If anyone suggests this as a solution to a L502 error, or use this option in his "default input file template", he should not be trusted to give any advice for Gaussian, and all of this computational result should be checked before interpretation. 
-     - Some people say you can use it in a geometry optimization, as if one of the steps is not converged, the next step could, and finally leads to a reasonable reault. However this is nonsence. If the SCF is not converged, the gradient has a much larger error than the energy, which means the following optimization step is bascially a ramdom nonsence move. If this solves the convergence problem, you may as well do this by yourself. Also, one may well be forgot to check EVERY optimization mission that the SCF is indeed converged in the last step, and report a meaningless result. 
+     - This IOp suppress the checking for SCF convergence. The program will carry out the following reaction no matter what's the situation of the SCF convergence. This should almost NEVER be used. The result is likely to be qualitatively wrong. If anyone suggests this as a solution to a L502 error, or use this option in his "default input file template", he should not be trusted to give any advice for Gaussian, and all of this computational result should be checked before interpretation. 
+     - Some people say you can use it in a geometry optimization, as if one of the steps is not converged, the next step could, and finally leads to a reasonable result. However, this is nonsense. If the SCF is not converged, the gradient has a much larger error than the energy, which means the following optimization step is basically a random move. If this solves the convergence problem, you may as well do this by yourself. Also, one may well be forgot to check EVERY optimization mission that the SCF is indeed converged in the last step, and report a meaningless result. 
    
 #
 <a name="200"></a>
