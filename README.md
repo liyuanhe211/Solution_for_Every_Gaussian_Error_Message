@@ -1100,7 +1100,8 @@ Gaussian的可执行文件有不同的指令集版本，不同指令集的CPU需
 
 解决：
 更换Gaussian的可执行文件的指令集版本，如将Gaussian 09 E.01 X86_64(AVX2-enabled) （兼容性差、但性能高） 更换为 Gaussian 09 E.01 X86_64(“Legacy”-pre-SSE4.2)（下兼容性好，但性能稍差）
-更换机器、使用最新的CPU
+对于一部分AMD CPU，即使经检查却有AVX2指令集也会报这一错误，此时可以通过添加环境变量`PGI_FASTMATH_CPU=sandybridge`解决。
+除此之外，更换机器、使用最新的CPU。
 #
 <a name="3000"></a>
 ####  :arrow_forward: Internal input file was deleted! :hourglass_flowing_sand:
